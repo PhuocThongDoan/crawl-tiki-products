@@ -3,22 +3,34 @@ import requests
 import json
 import csv
 
-laptop_page_url = "https://tiki.vn/bach-hoa-online/c4384?src=c.4384.hamburger_menu_fly_out_banner"
+laptop_page_url = 'https://tiki.vn/bach-hoa-online/c4384?page=2&amp'
 product_url = "https://tiki.vn/api/v2/products/{}"
 
 product_id_file = "./data/product-id.txt"
 product_data_file = "./data/product.txt"
 product_file = "./data/product.csv"
 
+def get_data_id(string_product_item):  
+  word = str(string_product_item)
+  result = word.find(".html?") 
+  data_id = ''
+  i = 1
+  while(1):
+    if (word[result-i]) != 'p':
+      data_id = data_id + word[result-i]
+      i += 1
+    else:
+      data_id = data_id[::-1]
+      break
+  return data_id
 
 def crawl_product_id():
     product_list = []
-    i = 1
-    while (i==1):
+    i = 2
+    while (i==2):
         print("Crawl page: ", i)
-        # headers = {'User-Agent': "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Mobile Safari/537.36"}
         headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 OPR/73.0.3856.344"}
-        response = requests.get(laptop_page_url.format(i), headers = headers)
+        response = requests.get(laptop_page_url, headers = headers)
         parser = BeautifulSoup(response.text, 'html.parser')
 
         product_box = parser.findAll(class_="product-item")
@@ -27,7 +39,7 @@ def crawl_product_id():
             break
 
         for product in product_box:
-            product_list.append(product.get("data-id"))
+            product_list.append(get_data_id(product))
 
         i += 1
 
@@ -99,19 +111,22 @@ print("No. Page: ", page)
 print("No. Product ID: ", len(product_list))
 
 # save product id for backup
-save_product_id(product_list)
+# save_product_id(product_list)
 
-# crawl detail for each product id
-product_list = crawl_product(product_list)
+# # crawl detail for each product id
+# product_list = crawl_product(product_list)
 
-# save product detail for backup
-save_raw_product(product_list)
+# # save product detail for backup
+# save_raw_product(product_list)
 
-# product_list = load_raw_product()
-# flatten detail before converting to csv
-product_json_list = [adjust_product(p) for p in product_list]
-# save product to csv
-save_product_list(product_json_list)
+# # product_list = load_raw_product()
+# # flatten detail before converting to csv
+# product_json_list = [adjust_product(p) for p in product_list]
+# # save product to csv
+# save_product_list(product_json_list)
+
+
+
 
 
 

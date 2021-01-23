@@ -3,7 +3,7 @@ import requests
 import json
 import csv
 
-laptop_page_url = "https://tiki.vn/laptop/c8095?src=c.8095.hamburger_menu_fly_out_banner&_lc=&page={}"
+laptop_page_url = "https://tiki.vn/bach-hoa-online/c4384?src=c.4384.hamburger_menu_fly_out_banner"
 product_url = "https://tiki.vn/api/v2/products/{}"
 
 product_id_file = "./data/product-id.txt"
@@ -14,9 +14,11 @@ product_file = "./data/product.csv"
 def crawl_product_id():
     product_list = []
     i = 1
-    while (True):
+    while (i==1):
         print("Crawl page: ", i)
-        response = requests.get(laptop_page_url.format(i))
+        # headers = {'User-Agent': "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Mobile Safari/537.36"}
+        headers = {'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 OPR/73.0.3856.344"}
+        response = requests.get(laptop_page_url.format(i), headers = headers)
         parser = BeautifulSoup(response.text, 'html.parser')
 
         product_box = parser.findAll(class_="product-item")
